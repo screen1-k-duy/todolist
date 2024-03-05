@@ -1,0 +1,58 @@
+body{
+	background-color: #eee;
+	margin: 0;
+	padding: 0;
+}
+.to-do-list{
+	display: flex;
+	justify-content: start;
+	align-items: center;
+	background-color: #fff;
+	margin: 0 20px;
+	border-radius: 10px;
+	border: 2px  solid transparent;
+	padding: 20px;
+}
+
+.to-do-list:hover{
+	border: 2px  solid #ccc;
+}
+
+
+.add-to-do{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	color: #1a73e8;
+}
+
+.add-to-do:hover{
+	color: #174ea6;
+}
+
+.add-to-do > svg{
+	color: #1a73e8;
+}
+
+.new-tasks{
+	display: flex;
+	gap: 20px;
+}
+
+.hidden{
+	display: none;
+}
+
+.add-content{
+	display: flex;
+	align-items: start;
+	flex-direction: column;
+
+}
+
+.add-content input{
+	border: none;
+	outline: none;
+}
+
