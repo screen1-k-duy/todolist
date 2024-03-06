@@ -1,12 +1,15 @@
 const addTaskButton = document.getElementById("add-task");
 const taskContainer = document.getElementById("task-container");
 const completed = document.getElementById("completed");
+const spanElement = completed.querySelector("span");
 
 let counter = 0;
 let flat = true;
+let checked = true;
+let countComplete = 0;
+let listComplete = [];
 
-const createElement = (counter, flat, title, detail, date) => {
-  console.log("counter", counter);
+const createElement = (listTask, counter, flat, title, detail, date, checked) => {
   const newTask = document.createElement("div");
   newTask.classList.add("new-tasks");
   newTask.setAttribute("id", `new-tasks-${counter}`);
@@ -15,6 +18,11 @@ const createElement = (counter, flat, title, detail, date) => {
   checkRadio.classList.add("check-radio");
   const radioInput = document.createElement("input");
   radioInput.type = "checkbox";
+  if (checked) {
+    radioInput.checked = true;
+    countComplete++;
+    spanElement.innerHTML = countComplete;
+  }
   checkRadio.appendChild(radioInput);
 
   const addContent = document.createElement("div");
@@ -39,65 +47,28 @@ const createElement = (counter, flat, title, detail, date) => {
   newTask.appendChild(checkRadio);
   newTask.appendChild(addContent);
 
-  taskContainer.appendChild(newTask);
+  listTask.appendChild(newTask);
 
   radioInput.addEventListener("click", () => {
     const thisCheckBox = this.document.activeElement;
     if (thisCheckBox.checked) {
+      countComplete++;
       const parentElement = thisCheckBox.closest(".new-tasks");
       parentElement.parentNode.removeChild(parentElement);
 
-      const titleInput = parentElement.querySelector(
-        ".add-content input[placeholder='Title']"
-      );
-
-      const detailInput = parentElement.querySelector(
-        ".add-content input[placeholder='Detail']"
-      );
-
-      const dateInput = parentElement.querySelector(
-        ".add-content input[type='date']"
-      );
-      console.log(titleInput.value);
-
-      // create content
-      const newTask = document.createElement("div");
-      newTask.classList.add("new-tasks");
-      newTask.setAttribute("id", `new-tasks-${counter}`);
-
-      const checkRadio = document.createElement("div");
-      checkRadio.classList.add("check-radio");
-      const radioInput = document.createElement("input");
-      radioInput.type = "checkbox";
-      checkRadio.appendChild(radioInput);
-
-      const addContent = document.createElement("div");
-      addContent.classList.add("add-content");
-      addContent.setAttribute("id", "add-content");
-
-      const titleInput2 = document.createElement("input");
-      titleInput2.type = "text";
-      titleInput2.placeholder = "Title";
-
-      const detailInput2 = document.createElement("input");
-      detailInput2.type = "text";
-      detailInput2.placeholder = "Detail";
-
-      const dateInput2 = document.createElement("input");
-      dateInput2.type = "date";
-
-      addContent.appendChild(titleInput);
-      addContent.appendChild(detailInput);
-      addContent.appendChild(dateInput);
-
-      newTask.appendChild(checkRadio);
-      newTask.appendChild(addContent);
+      listComplete.push(counter);
 
       completed.appendChild(newTask);
 
+      console.log("countComplete", countComplete);
+      spanElement.innerHTML = countComplete;
     } else {
-      console.log("Checkbox is unchecked");
+      countComplete--;
+      spanElement.innerHTML = countComplete;
+      taskContainer.appendChild(newTask);
     }
+
+    localStorage.setItem("list_complete", JSON.stringify(listComplete));
   });
 
   if (flat) {
@@ -162,6 +133,9 @@ addTaskButton.addEventListener("click", () => {
 window.addEventListener("load", (event) => {
   const getCounter = localStorage.getItem("counter");
   // const newTasks = document.getElementById("new-tasks-1");
+  const getListComplete = JSON.parse(localStorage.getItem("list_complete"));
+
+  console.log('getting list complete',typeof getListComplete, getListComplete?.length);
 
   flat = false;
 
@@ -170,8 +144,24 @@ window.addEventListener("load", (event) => {
     let detail = localStorage.getItem(`detail-${index}`);
     let date = localStorage.getItem(`date-${index}`);
 
-    if (title || detail || date) {
-      createElement(index, flat, title, detail, date);
+    const foundElement = getListComplete.find((element) => element === index);
+    if (foundElement) {
+      checked = true;
+      createElement(completed, index, flat, title, detail, date, checked);
+    }else{
+      checked = false;
+       if (title || detail || date) {
+         createElement(
+           taskContainer,
+           index,
+           flat,
+           title,
+           detail,
+           date,
+           checked
+         );
+       }
     }
   }
+
 });
