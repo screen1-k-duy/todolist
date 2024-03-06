@@ -64,10 +64,12 @@ const createElement = (listTask, counter, flat, title, detail, date, checked) =>
       spanElement.innerHTML = countComplete;
     } else {
       countComplete--;
+      listComplete.splice(counter,1);
       spanElement.innerHTML = countComplete;
       taskContainer.appendChild(newTask);
     }
 
+    console.log("listComplete", listComplete);
     localStorage.setItem("list_complete", JSON.stringify(listComplete));
   });
 
@@ -121,7 +123,7 @@ addTaskButton.addEventListener("click", () => {
   counter++;
   flat = true;
 
-  createElement(counter, flat);
+  createElement(taskContainer, counter, flat);
 
   localStorage.setItem("counter", counter);
 
@@ -144,7 +146,7 @@ window.addEventListener("load", (event) => {
     let detail = localStorage.getItem(`detail-${index}`);
     let date = localStorage.getItem(`date-${index}`);
 
-    const foundElement = getListComplete.find((element) => element === index);
+    const foundElement = getListComplete?.find((element) => element === index);
     if (foundElement) {
       checked = true;
       createElement(completed, index, flat, title, detail, date, checked);
